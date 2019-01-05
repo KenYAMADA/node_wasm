@@ -3,21 +3,22 @@
 # test_exitcode.sh
 #
 # usage:
-#  sh test_exitcode.sh compilername interpname filename 
+#  sh test_exitcode.sh translatername interpname filename 
 #
 
-compiler=../$1
+translater=../$1
 interpreter=../$2
 src=$3
 jsfile=../sample/$src
 
 wast_file=tmp/$src.wast
 wasm_file=tmp/$src.wasm
-wasm_exec=../node_run_wasm.js
+#wasm_exec=../node_run_wasm.js
+wasm_exec=../run_wasm_simple.js
 
 interp_wasm_exit=0
-interp_wast_file=tmp/$src_interp.wast
-interp_wasm_file=tmp/$src_interp.wasm
+interp_wast_file=tmp/interp_$src.wast
+interp_wasm_file=tmp/interp_$src.wasm
 
 direct_file=tmp/node_direct_$src
 direct_exit=0
@@ -34,62 +35,61 @@ then
 fi
 
 
-# -- compile to wast ---
-CompileToWast() {
-  echo "--- compile src=$jsfile wast=$wast compiler=$compiler ---"
-  node $compiler $jsfile
+# -- translate to wast ---
+TranslateToWast() {
+  echo "--- translate src=$jsfile wast=$wast_file translater=$translater ---"
+  node $translater $jsfile
   if [ "$?" -eq "0" ]
   then
-    echo "compile SUCCERSS"
+    echo "translate SUCCERSS"
     mv generated.wast $wast_file
   else
-    echo "!! compile FAILED !!"
+    echo "ERROR! ... translate FAILED !"
     exit 1
   fi
 }
 
 WastToWasm() {
-  echo "--- wast $wast_file to wasm $wasm_file--"
+  echo "--- wast $wast_file to wasm $wasm_file --"
   $wasmas $wast_file
   if [ "$?" -eq "0" ]
   then
     echo "wasm-as SUCCERSS"
   else
-    echo "!! wasm-as FAILED !!"
+    echo "ERROR! ... wasm-as FAILED !"
     exit 1
   fi
 }
 
 ExecWasm() {
   echo "--- exec $wasm_file from node"
-  #cp $wasm_file generated.wasm
   node $wasm_exec $wasm_file
   wasm_exit=$?
   echo "wasm exit code=$wasm_exit"
 }
 
-# -- compile on interpreter to wast ---
-InterpCompileToWast() {
-  echo "--- interp-compile src=$jsfile wast=$interp_wast_file compiler=$compiler interp=$interpreter ---"
-  node $interpreter $compiler $jsfile
+# -- translate on interpreter to wast ---
+InterpTranslateToWast() {
+  echo "--- interp-translate src=$jsfile wast=$interp_wast_file translater=$translater interp=$interpreter ---"
+  node $interpreter $translater $jsfile
   if [ "$?" -eq "0" ]
   then
-    echo "interp-compile SUCCERSS"
+    echo "interp-translate SUCCERSS"
     mv generated.wast $interp_wast_file
   else
-    echo "!! compile FAILED !!"
+    echo "ERROR! ... interp-translate FAILED !"
     exit 1
   fi
 }
 
 InterpWastToWasm() {
-  echo "--- interp-wast $interp_wast_file to wasm $interp_wasm_file--"
+  echo "--- interp-wast $interp_wast_file to interp-wasm $interp_wasm_file --"
   $wasmas $interp_wast_file
   if [ "$?" -eq "0" ]
   then
     echo "interp-wasm-as SUCCERSS"
   else
-    echo "!! interp-wasm-as FAILED !!"
+    echo "ERROR! ... interp-wasm-as FAILED !"
     exit 1
   fi
 }
@@ -148,11 +148,11 @@ CleanUp() {
   echo ""
 }
 
-CompileToWast
+TranslateToWast
 WastToWasm
 ExecWasm
 
-InterpCompileToWast
+InterpTranslateToWast
 InterpWastToWasm
 InterpExecWasm
 
