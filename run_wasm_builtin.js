@@ -1,4 +1,4 @@
-// node_run_wasm.js
+// run_wasm_builtin.js
 //  refer https://www.codepool.biz/use-webassembly-node-js.html
 //  refer https://medium.com/commitlog/hello-webassembly-882bba5c9fb7
 
@@ -6,7 +6,7 @@
 
 const fs = require('fs');
 
-const filename = process.argv[2];
+const filename = process.argv[2]; // 対象とするwasmファイル名
 console.warn('Loading wasm file: ' + filename);
 
 let source = fs.readFileSync(filename);
