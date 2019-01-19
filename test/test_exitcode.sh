@@ -13,8 +13,8 @@ jsfile=../sample/$src
 
 wast_file=tmp/$src.wast
 wasm_file=tmp/$src.wasm
-#wasm_exec=../node_run_wasm.js
-wasm_exec=../run_wasm_simple.js
+#wasm_exec=../run_wasm_simple.js
+wasm_exec=../run_wasm_builtin.js
 
 interp_wasm_exit=0
 interp_wast_file=tmp/interp_$src.wast
