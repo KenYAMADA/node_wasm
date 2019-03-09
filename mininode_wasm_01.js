@@ -21,45 +21,45 @@ const writeFile = require('./module_writefile.js');
 
 // ======== for comiler =======
 function LF() {
-  return '\n';
+    return '\n';
 }
 
 function TAB() {
-  return '  ';
+    return '  ';
 }
 
 // ==== compile to WAST/WASM =====
 
 // ---- compile simplified tree into WAST ---
 function compile(tree) {
-  const mainBlock = generate(tree);
-  
-  let block = '(module' + LF();
-  block = block + TAB() + '(export "exported_main" (func $main))' + LF();
-  block = block + TAB() + '(func $main (result i32)' + LF();
-  block = block + TAB() + TAB() + mainBlock + LF();
-  block = block + TAB() + ')' + LF();
-  block = block + ')';
+    const mainBlock = generate(tree);
 
-  return block;
+    let block = '(module' + LF();
+    block = block + TAB() + '(export "exported_main" (func $main))' + LF();
+    block = block + TAB() + '(func $main (result i32)' + LF();
+    block = block + TAB() + TAB() + mainBlock + LF();
+    block = block + TAB() + ')' + LF();
+    block = block + ')';
+
+    return block;
 }
 
 // ---- genereate WAST block ---
 function generate(tree) {
-  if (tree === null) {
-    return '';
-  }
+    if (tree === null) {
+        return '';
+    }
 
-  if (tree[0] === 'lit') {
-    const v = tree[1];
+    if (tree[0] === 'lit') {
+        const v = tree[1];
 
-    const block = '(i32.const ' + v + ')';
-    return block;
-  }
+        const block = '(i32.const ' + v + ')';
+        return block;
+    }
 
-  println('-- ERROR: unknown node in generate() ---');
-  printObj(tree);
-  abort();
+    println('-- ERROR: unknown node in generate() ---');
+    printObj(tree);
+    abort();
 }
 
 // ======== start compiler =======
