@@ -101,6 +101,7 @@ TestSingleExitCode add_many.js
 TestSingleExitCode binoperator.js
 
 # step_03
+TestSingleStdout var0.js
 TestSingleStdout var.js
 
 # step_04
