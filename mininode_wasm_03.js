@@ -59,7 +59,7 @@ let l_ctx = initialLocalContext(); // top level local context
 function compile(tree, lctx) {
   const mainBlock = generate(tree, 2, lctx);
   const varBlock = generateVariableBlock(tree, 2, lctx);
-  
+
   let block = '(module' + LF();
   // (func $i (import "imports" "imported_func") (param i32))
   block = block + TAB() + '(func $putn (import "imports" "imported_putn") (param i32))' + LF();
@@ -147,8 +147,8 @@ function generate(tree, indent, lctx) {
 function generateCallPutn(tree, indent, lctx) {
   // tree = ['func_call', 'name', arg1, arg2, ... ]
 
-  const valueBlock = generate(tree[2], indent+1, lctx);
-  if (! valueBlock) {
+  const valueBlock = generate(tree[2], indent + 1, lctx);
+  if (!valueBlock) {
     println('---ERROR: empty args for putn() --');
     abort();
   }
@@ -174,20 +174,22 @@ function declareVariable(tree, indent, lctx) {
   lctx[name] = varName;
 
   // --- assign initial value --
-  let init = generate(tree[2], indent+1, lctx);
-  if (! init) {
-    init = TABs(indent+1) + '(i32.const 0)';
-  }
+  let init = generate(tree[2], indent + 1, lctx);
+  //if (!init) {
+  //  init = TABs(indent + 1) + '(i32.const 0)';
+  //}
 
   let block = '';
-  block = TABs(indent) + '(set_local ' + varName + LF();
-  block = block + init + LF();
-  block = block + TABs(indent) + ')';
+  if (init) {
+    block = TABs(indent) + '(set_local ' + varName + LF();
+    block = block + init + LF();
+    block = block + TABs(indent) + ')';
+  }
 
   return block;
 }
 
-// --- variable refer ---
+// --- refer variable ---
 function referVariable(tree, indent, lctx) {
   // -- check EXIST --
   const name = tree[1];
@@ -204,6 +206,7 @@ function referVariable(tree, indent, lctx) {
   abort();
 }
 
+// --- assign variable ---
 function assignVariable(tree, indent, lctx) {
   // -- check EXIST --
   const name = tree[1];
@@ -211,8 +214,8 @@ function assignVariable(tree, indent, lctx) {
     let block = '';
     const varName = lctx[name];
 
-    const valueBlock = generate(tree[2], indent+1, lctx);
-    if (! valueBlock) {
+    const valueBlock = generate(tree[2], indent + 1, lctx);
+    if (!valueBlock) {
       println('---ERROR: var assign value NOT exist --');
       abort();
     }
@@ -259,8 +262,8 @@ function generateLiteral(tree, indent, lctx) {
 
 // --- binary operator ---
 function generateBinaryOperator(tree, indent, operator, lctx) {
-  const leftBlock = generate(tree[1], indent+1, lctx);
-  const rightBlock = generate(tree[2], indent+1, lctx);
+  const leftBlock = generate(tree[1], indent + 1, lctx);
+  const rightBlock = generate(tree[2], indent + 1, lctx);
 
   let block = TABs(indent) + '(i32.' + operator + LF();
   block = block + leftBlock + LF();
