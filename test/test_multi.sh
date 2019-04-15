@@ -107,6 +107,7 @@ TestSingleStdout var0.js
 TestSingleStdout var.js
 
 # step_04
+TestSingleStdout neq.js
 TestSingleStdout comp.js
 
 # step_05
