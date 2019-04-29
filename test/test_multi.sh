@@ -111,6 +111,8 @@ TestSingleStdout neq.js
 TestSingleStdout comp.js
 
 # step_05
+TestSingleStdout if1.js
+TestSingleStdout if0.js
 TestSingleStdout if.js
 TestSingleStdout while.js
 
